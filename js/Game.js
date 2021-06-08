@@ -9,47 +9,62 @@ const key = document.getElementsByClassName("key");
 
 const hearts = document.getElementsByClassName('tries');
 
-const gotPhrase = new Phrase();
-
 let gameLost = false;
 let gameWon = false;
 
 let heartCounter = -1;
 	
-
-
 let gamePhrase;
+
+let phrases;
+let rand;
+
+let clickedKey;
+let clickedOn;
+
 
 const lettersHidden = document.getElementsByClassName('hide');
 const totalLettersHidden = lettersHidden.length;
 
-
+let gotPhrase;
 
 class Game {
+
 	constructor(game){
 		this.missed = 0;
-		this.phrases = ["every moment is a fresh beginning", "what we think we become", "whatever you do do it well", "die with memories not dreams", "turn your wounds into wisdom"];  
+		this.phrases = this.phrases = [
+									  {phrase: new Phrase('every moment is a fresh beginning')},
+									  {phrase: new Phrase('what we think we become')},
+									  {phrase: new Phrase('whatever you do do it well')},
+									  {phrase: new Phrase('die with memories not dreams')},
+									  {phrase: new Phrase('turn your wounds into wisdom')}
+									]
+
+
 		this.activePrase = null;
 	}
 		 
 	//getRandomPhrase(): this method randomly retrieves one of the phrases stored in the phrases array and returns it.
 	getRandomPhrase(){
-		const phrases = this.phrases;
-		let rand = Math.floor(Math.random() * phrases.length); 
-    	this.activePhrase = phrases[rand];
+		phrases = this.phrases;
+		rand = Math.floor(Math.random() * phrases.length); 
+    	return phrases[rand].phrase;
     	
 		}
+
+		//In the startGame method, the addPhraseToDisplay method should be called on the active phrase (i.e. this.activePhrase).
 	startGame() {
 		const overlay = document.getElementById("overlay");
-		
-		startButton.addEventListener('click' , function(){ 
-    		overlay.style.display = "none";
-    	})
+		overlay.style.display = "none";	
 
     	this.getRandomPhrase();
-	
-		gotPhrase.phrase = this.activePhrase;
-		console.log(gotPhrase.phrase);
+
+    	this.activePhrase = phrases[rand].phrase;
+
+    	//note to reviewer: assigning this.activePhrase to the variable gotPhrase because it's easier to read
+    	gotPhrase = this.activePhrase;	
+
+		console.log(this.activePhrase.phrase);
 		gotPhrase.addPhraseToDisplay();
 
 	}
@@ -65,49 +80,39 @@ class Game {
 		if(heartCounter === 4){
 			console.log("you lost! heart counter is at " + heartCounter);
 			gameLost = true;
+			game.gameOver();
 		}	
 		
 	}
 
 
 	handleInteraction(){
-
-		keyBoard.addEventListener('click' , function(e){
-			// console.log(heartCounter);
-			if(e.target.className === "keyrow"){
-				return;
-			}
-
 			//Disable the selected letter’s onscreen keyboard button.
-			e.target.disabled = true;
+			clickedOn.disabled = true;
 			matchAtleast1 = false;
-
-			const clickedKey = e.target.innerHTML.toLowerCase();
+			clickedKey = clickedOn.innerHTML.toLowerCase();		
 
 			//If the phrase does not include the guessed letter, add the wrong CSS class to the selected letter's keyboard button and call the removeLife() method.
 
 			//If the phrase includes the guessed letter, add the chosen CSS class to the selected letter's keyboard button, call the showMatchedLetter() method on the phrase, and then call the checkForWin() method. If the player has won the game, also call the gameOver() method.
-
 			gotPhrase.checkLetter(clickedKey);
 			if(matchAtleast1 === true){
 				gotPhrase.showMatchedLetter();
-				e.target.setAttribute("class", "chosen");
+				clickedOn.setAttribute("class", "chosen");
+				game.checkForWin();
 
 			}else if(matchAtleast1 === false){
-				e.target.setAttribute("class", "wrong");
+				clickedOn.setAttribute("class", "wrong");
 				game.removeLife();
 
 			}
-			game.checkForWin();
-			game.gameOver();
-
-		})
-
+			
 	}
 
 	checkForWin(){
 		if(lettersHidden.length === 0){
 			gameWon = true;
+			game.gameOver();
 		}
 	}
 
