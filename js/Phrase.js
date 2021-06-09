@@ -58,8 +58,6 @@ let correctGuessArray = [];
 
  	  			correctGuessArray = [];
 
-
-
  	  			for(let i = 0; i < phraseArray.length ; i++){
  	  				activeLetterLowercase = phraseArray[i].toLowerCase();
  	  				if(activeLetterLowercase === clickedKey){
@@ -72,9 +70,7 @@ let correctGuessArray = [];
  
  	  					correctGuessHTMLCollection = document.getElementsByClassName("hide letter " + correctGuessArray[0]);
  	  					console.log(correctGuessHTMLCollection);
-
  	  				}
-
  	  				
  	  			}
  	 }
@@ -88,10 +84,8 @@ let correctGuessArray = [];
  	 		console.log(correctGuessHTMLCollection);
  	 		
  	 		correctGuessHTMLCollection[0].classList.add("show");	
- 	 		correctGuessHTMLCollection[0].classList.remove("hide");	
- 		 	 	
+ 	 		correctGuessHTMLCollection[0].classList.remove("hide");			 	 	
  	 	} 	 	
-
  	 }
 
  }

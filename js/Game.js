@@ -2,8 +2,6 @@
  * Project 4 - OOP Game App
  * Game.js */
 
- // Phrase.js to create a Phrase class to handle the creation of phrases.
-
 const keyBoard = document.getElementById("qwerty");
 const key = document.getElementsByClassName("key");
 
@@ -22,7 +20,6 @@ let rand;
 let clickedKey;
 let clickedOn;
 
-
 const lettersHidden = document.getElementsByClassName('hide');
 const totalLettersHidden = lettersHidden.length;
 
@@ -39,8 +36,6 @@ class Game {
 									  {phrase: new Phrase('die with memories not dreams')},
 									  {phrase: new Phrase('turn your wounds into wisdom')}
 									]
-
-
 		this.activePrase = null;
 	}
 		 
@@ -52,7 +47,7 @@ class Game {
     	
 		}
 
-		//In the startGame method, the addPhraseToDisplay method should be called on the active phrase (i.e. this.activePhrase).
+	//In the startGame method, the addPhraseToDisplay method should be called on the active phrase (i.e. this.activePhrase).
 	startGame() {
 		const overlay = document.getElementById("overlay");
 		overlay.style.display = "none";	
@@ -66,72 +61,92 @@ class Game {
 
 		console.log(this.activePhrase.phrase);
 		gotPhrase.addPhraseToDisplay();
-
 	}
 
 	removeLife(){
-
 		heartCounter += 1;			
-
-		console.log(heartCounter);	
-		
+		console.log(heartCounter);		
 		hearts[heartCounter].firstChild.src = "images/lostHeart.png";
 
 		if(heartCounter === 4){
 			console.log("you lost! heart counter is at " + heartCounter);
 			gameLost = true;
-			game.gameOver();
-		}	
-		
+			game.gameOver("lose");
+		}		
 	}
 
 
 	handleInteraction(){
-			//Disable the selected letter’s onscreen keyboard button.
-			clickedOn.disabled = true;
-			matchAtleast1 = false;
-			clickedKey = clickedOn.innerHTML.toLowerCase();		
+		//Disable the selected letter’s onscreen keyboard button.
+		clickedOn.disabled = true;
+		matchAtleast1 = false;
+		clickedKey = clickedOn.innerHTML.toLowerCase();		
 
-			//If the phrase does not include the guessed letter, add the wrong CSS class to the selected letter's keyboard button and call the removeLife() method.
+		//If the phrase does not include the guessed letter, add the wrong CSS class to the selected letter's keyboard button and call the removeLife() method.
 
-			//If the phrase includes the guessed letter, add the chosen CSS class to the selected letter's keyboard button, call the showMatchedLetter() method on the phrase, and then call the checkForWin() method. If the player has won the game, also call the gameOver() method.
-			gotPhrase.checkLetter(clickedKey);
-			if(matchAtleast1 === true){
-				gotPhrase.showMatchedLetter();
-				clickedOn.setAttribute("class", "chosen");
-				game.checkForWin();
+		//If the phrase includes the guessed letter, add the chosen CSS class to the selected letter's keyboard button, call the showMatchedLetter() method on the phrase, and then call the checkForWin() method. If the player has won the game, also call the gameOver() method.
+		gotPhrase.checkLetter(clickedKey);
 
-			}else if(matchAtleast1 === false){
-				clickedOn.setAttribute("class", "wrong");
-				game.removeLife();
-
+		if(matchAtleast1 === true){
+			gotPhrase.showMatchedLetter();
+			clickedOn.setAttribute("class", "chosen");
+			game.checkForWin();
+			if (gameWon === true){
+				game.gameOver("win");
 			}
+
+		}else if(matchAtleast1 === false){
+			clickedOn.setAttribute("class", "wrong");
+			game.removeLife();
+		}
 			
 	}
 
 	checkForWin(){
 		if(lettersHidden.length === 0){
 			gameWon = true;
-			game.gameOver();
+			// game.gameOver("win");
 		}
 	}
 
 	//gameOver(): this method displays the original start screen overlay, and depending on the outcome of the game, updates the overlay h1 element with a friendly win or loss message, and replaces the overlay’s start CSS class with either the win or lose CSS class.
-	gameOver(){
+	gameOver(status){
 		const gameOverMessage = document.getElementById('game-over-message');
-		if(gameLost === true){
+		if(status === "lose"){
 			overlay.style.display = "";
 			overlay.classList.remove('win');
 			overlay.classList.add('lose');
 			gameOverMessage.innerHTML = "You Lost! 😭";
 		}
 
-		if(gameWon === true){
+		if(status === "win"){
 			overlay.style.display = "";
 			overlay.classList.remove('lose');
 			overlay.classList.add('win');
 			gameOverMessage.innerHTML = "Yay, you won! 🎉";
 		}
+
+		//resetting the game
+		gameLost = false;
+		gameWon = false;
+		heartCounter = -1;
+
+		//Remove all li elements from the Phrase ul element.
+		ul.innerHTML = "";
+		
+		//Enable all of the onscreen keyboard buttons and update each to use the key CSS class, and not use the chosen or wrong CSS classes.	
+		for (let i = 0; i < allKeys.length ; i++){
+			allKeys[i].setAttribute("class", "key");
+			allKeys[i].disabled = false;
+		}
+		//Reset all of the heart images (i.e. the player's lives) in the scoreboard at the bottom of the gameboard to display the liveHeart.png image.
+		for (let i = 0; i < hearts.length ; i++){
+			hearts[i].firstChild.src = "images/liveHeart.png";
+		}
+		heartCounter = -1;
+
+		//Remove all li elements from the Phrase ul element.
+		ul.innerHTML = "";
 		
 	}
 
@@ -139,10 +154,6 @@ class Game {
 
 }
  
-
-
-
-
 
 
 // //The class should include a constructor that initializes the following properties:
